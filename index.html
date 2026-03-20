@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICD-10-CM Coding Mastery Lab — Part 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1a5fb4;--blue-l:#dde9fd;--blue-m:#4d8ce0;
+  --green:#2e7d32;--green-l:#e8f5e9;--green-m:#4caf50;
+  --yellow:#f59e0b;--yellow-l:#fffbeb;--yellow-m:#fcd34d;
+  --red:#c0392b;--red-l:#fdf0ef;--red-m:#ef5350;
+  --purple:#6a1b9a;--purple-l:#f3e5f5;--purple-m:#ab47bc;
+  --teal:#0277bd;--teal-l:#e1f5fe;--teal-m:#29b6f6;
+  --orange:#e65100;--orange-l:#fff3e0;--orange-m:#ff9800;
+  --border:#e0e6ef;--page:#f5f7fc;--white:#fff;
+  --ink:#1a1f2e;--ink2:#3d4a5c;--ink3:#6b7a90;
+  --shadow:0 2px 12px rgba(26,45,78,.08);
+  --shadow-lg:0 8px 32px rgba(26,45,78,.13);
+  --r:12px;--r-sm:8px;--r-xs:5px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--page);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.6}
+h1,h2,h3,h4{font-family:'Lora',Georgia,serif;line-height:1.25}
+#hdr{background:linear-gradient(135deg,#0f2c5a 0%,#1a5fb4 55%,#0277bd 100%);color:#fff;padding:18px 24px 16px;position:sticky;top:0;z-index:300;box-shadow:0 3px 18px rgba(10,30,70,.25)}
+.hdr-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.hdr-brand{display:flex;align-items:center;gap:12px}
+.hdr-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;color:#fff;flex-shrink:0}
+.hdr-title{font-size:clamp(.88rem,1.8vw,1.05rem);font-weight:700;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
+.hdr-sub{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.part-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;letter-spacing:.4px}
+.nav-btn{padding:4px 10px;border-radius:9px;font-size:.72rem;font-weight:700;border:none;cursor:pointer;color:#fff;background:rgba(255,255,255,.15);transition:background .15s;font-family:'Plus Jakarta Sans',sans-serif}
+.nav-btn:hover{background:rgba(255,255,255,.25)}
+#tab-nav{background:var(--white);border-bottom:2px solid var(--border);overflow-x:auto;white-space:nowrap;padding:0 16px;position:sticky;top:71px;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.tab{display:inline-block;padding:12px 14px;cursor:pointer;font-size:.76rem;font-weight:600;color:var(--ink3);border-bottom:3px solid transparent;transition:all .18s;user-select:none;letter-spacing:.3px;text-transform:uppercase}
+.tab:hover{color:var(--blue);border-bottom-color:rgba(26,95,180,.3)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.sec{display:none;padding:26px 20px;max-width:1200px;margin:0 auto;animation:fi .3s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:20px;margin-bottom:16px;border:1px solid var(--border)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:680px){.g2,.g3,.card-grid{grid-template-columns:1fr}}
+.ib{border-radius:var(--r-sm);padding:13px 16px;margin:9px 0;font-size:.88rem;line-height:1.72}
+.ib-blue{background:var(--blue-l);border-left:4px solid var(--blue);color:#1a3a6e}
+.ib-green{background:var(--green-l);border-left:4px solid var(--green);color:#1b5e20}
+.ib-yellow{background:var(--yellow-l);border-left:4px solid var(--yellow);color:#78350f}
+.ib-red{background:var(--red-l);border-left:4px solid var(--red);color:#7f1d1d}
+.ib-purple{background:var(--purple-l);border-left:4px solid var(--purple);color:#4a148c}
+.ib-orange{background:var(--orange-l);border-left:4px solid var(--orange);color:#7c3401}
+.tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.68rem;font-weight:700;margin:2px;letter-spacing:.3px}
+.tag-blue{background:var(--blue-l);color:var(--blue)}.tag-green{background:var(--green-l);color:var(--green)}
+.tag-yellow{background:var(--yellow-l);color:var(--orange)}.tag-red{background:var(--red-l);color:var(--red)}
+.tag-purple{background:var(--purple-l);color:var(--purple)}
+.lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);margin-bottom:4px;margin-top:10px;font-family:'Plus Jakarta Sans',sans-serif}
+ul.lst{list-style:none;padding:0}
+ul.lst li{padding:3px 0 3px 18px;position:relative;font-size:.88rem;line-height:1.6}
+ul.lst li::before{content:"▸";position:absolute;left:0;color:var(--blue);font-size:.75rem;top:5px}
+hr.dv{border:none;border-top:1px solid var(--border);margin:18px 0}
+.btn{padding:9px 20px;border-radius:var(--r-sm);border:none;cursor:pointer;font-weight:600;font-size:.85rem;transition:all .18s;font-family:'Plus Jakarta Sans',sans-serif}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#154d9a}
+.btn-outline{background:var(--white);border:2px solid var(--blue);color:var(--blue)}.btn-outline:hover{background:var(--blue-l)}
+.btn-sm{padding:5px 14px;font-size:.78rem}
+.opt{display:block;width:100%;text-align:left;padding:11px 15px;margin:7px 0;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:.88rem;transition:all .18s;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5}
+.opt:hover:not(:disabled){border-color:var(--blue);background:var(--blue-l)}
+.opt.correct{border-color:var(--green)!important;background:var(--green-l)!important;color:var(--green);font-weight:600}
+.opt.wrong{border-color:var(--red)!important;background:var(--red-l)!important;color:var(--red)}
+.opt.show-c{border-color:var(--green)!important;background:var(--green-l)!important}
+.rationale{display:none;margin-top:12px;padding:13px 15px;background:#f8fafc;border-radius:var(--r-sm);font-size:.86rem;line-height:1.7;border-left:3px solid var(--blue)}
+.rationale.show{display:block}
+.acc{border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;overflow:hidden}
+.acc-hd{padding:13px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.9rem;background:#fafbfd;transition:background .15s;user-select:none}
+.acc-hd:hover{background:var(--blue-l);color:var(--blue)}
+.acc.open .acc-hd{background:var(--blue-l);color:var(--blue)}
+.acc-body{display:none;padding:14px 16px;border-top:1px solid var(--border);font-size:.87rem;line-height:1.75}
+.acc.open .acc-body{display:block}
+.acc-arr{font-size:.72rem;transition:transform .18s;color:var(--ink3);flex-shrink:0;margin-left:8px}
+.acc.open .acc-arr{transform:rotate(180deg)}
+.score-banner{background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;gap:20px;margin-bottom:18px;flex-wrap:wrap}
+.sb-num{font-size:2.2rem;font-weight:800;font-family:'Lora',serif;line-height:1}
+.sb-prog{flex:1;height:8px;background:rgba(255,255,255,.25);border-radius:4px;overflow:hidden;margin-top:5px}
+.sb-fill{height:100%;background:#fff;border-radius:4px;transition:width .5s ease}
+.concept-card{border-radius:var(--r);padding:16px 18px;margin-bottom:12px;border-left:5px solid}
+.cc-blue{background:var(--blue-l);border-color:var(--blue)}.cc-green{background:var(--green-l);border-color:var(--green)}
+.cc-yellow{background:var(--yellow-l);border-color:var(--yellow)}.cc-red{background:var(--red-l);border-color:var(--red)}
+.cc-purple{background:var(--purple-l);border-color:var(--purple)}.cc-orange{background:var(--orange-l);border-color:var(--orange)}
+.concept-card h4{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.92rem;margin-bottom:6px}
+.concept-card p{font-size:.87rem;line-height:1.68}
+.sec-hd{font-size:clamp(1.3rem,2.5vw,1.75rem);color:var(--ink);margin-bottom:5px}
+.sec-sub{color:var(--ink3);font-size:.9rem;margin-bottom:22px;max-width:720px;line-height:1.65}
+.sec-label{display:inline-block;background:var(--blue);color:#fff;padding:2px 10px;border-radius:4px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+table.compare-tbl{width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0}
+table.compare-tbl th{background:var(--ink);color:#fff;padding:9px 12px;text-align:left;font-weight:600}
+table.compare-tbl td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+table.compare-tbl tr:nth-child(even) td{background:#f8fafc}
+.sys-tab-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.sys-tab{padding:6px 14px;border-radius:20px;border:2px solid var(--border);background:var(--white);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .18s;font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink3)}
+.sys-tab:hover{border-color:var(--blue);color:var(--blue)}
+.sys-tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.sys-sec{display:none}.sys-sec.active{display:block}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700}
+.badge-hy{background:#fef3c7;color:#92400e}.badge-cc{background:#fce7f3;color:#9d174d}
+.badge-trap{background:var(--red-l);color:var(--red)}.badge-doc{background:var(--teal-l);color:var(--teal)}
+.badge-uns{background:var(--orange-l);color:var(--orange)}
+.soap-note{background:#fafbfd;border:1px solid var(--border);border-radius:var(--r-sm);padding:16px 18px;font-family:'Lora',serif;font-size:.88rem;line-height:1.8;margin-bottom:14px}
+.soap-label{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.8px;text-transform:uppercase;color:var(--blue);margin-bottom:3px}
+.soap-section{margin-bottom:10px}
+.mem-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;border-top:5px solid;margin-bottom:14px;border:1px solid var(--border)}
+.fc-wrap{perspective:1000px;cursor:pointer;height:155px;margin-bottom:12px}
+.fc{width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s;position:relative}
+.fc.flip{transform:rotateY(180deg)}
+.fc-f,.fc-b{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:var(--r-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center}
+.fc-f{background:linear-gradient(135deg,var(--blue),#4d8ce0);color:#fff}
+.fc-b{background:linear-gradient(135deg,var(--green),#43a047);color:#fff;transform:rotateY(180deg)}
+.fc-lbl{font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;opacity:.75;margin-bottom:6px}
+.fc-txt{font-size:.9rem;font-weight:600;line-height:1.45}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-brand">
+      <div class="hdr-icon">ICD</div>
+      <div>
+        <div class="hdr-title">ICD-10-CM Interactive Coding Mastery Lab</div>
+        <div class="hdr-sub">Diagnosis Coding · CBCS Preparation · ICD-10-CM Reasoning</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="part-badge">PART 2 · Sections 7–12</div>
+      <button class="nav-btn" onclick="window.location='icd_part1.html'">← Part 1</button>
+    </div>
+  </div>
+</header>
+
+<nav id="tab-nav">
+  <span class="tab active" data-s="s7">🔀 Confusing Diagnoses</span>
+  <span class="tab" data-s="s8">🫁 Body System Drills</span>
+  <span class="tab" data-s="s9">📝 CBCS Scenarios</span>
+  <span class="tab" data-s="s10">🧠 Memory Tricks</span>
+  <span class="tab" data-s="s11">✅ Quick Quiz</span>
+  <span class="tab" data-s="s12">⚡ Rapid Review</span>
+</nav>
+
+<!-- ══ S7: CONFUSING DIAGNOSES ══ -->
+<div class="sec active" id="s7">
+  <div class="sec-label">Section 7</div>
+  <h2 class="sec-hd">Confusing Diagnoses Students Mix Up</h2>
+  <p class="sec-sub">The real exam tests whether you can distinguish between similar-sounding codes. The deciding detail is almost always one documented word.</p>
+
+  <div class="ib-red"><strong>🎯 Pattern:</strong> Two codes look almost identical. One word — type, site, cause, acuity, laterality — separates them. Train your eye to spot that word in the documentation.</div>
+  <div id="confused-container"></div>
+</div>
+
+<!-- ══ S8: BODY SYSTEM DRILLS ══ -->
+<div class="sec" id="s8">
+  <div class="sec-label">Section 8</div>
+  <h2 class="sec-hd">Coding Drills by Body System</h2>
+  <p class="sec-sub">Practice coding logic organized by body system. Each system has unique specificity rules, common main terms, and classic exam traps.</p>
+
+  <div class="sys-tab-nav" id="sys-tabs"></div>
+  <div id="sys-content"></div>
+</div>
+
+<!-- ══ S9: CBCS SCENARIOS ══ -->
+<div class="sec" id="s9">
+  <div class="sec-label">Section 9</div>
+  <h2 class="sec-hd">CBCS-Style Practice Scenarios</h2>
+  <p class="sec-sub">30+ original CBCS-inspired coding scenarios. Focus on ICD-10-CM diagnosis coding logic, documentation analysis, and code selection reasoning.</p>
+
+  <div class="score-banner">
+    <div><div class="sb-num" id="cbcs-score">0</div><div style="font-size:.8rem;opacity:.85">Correct</div></div>
+    <div style="flex:1"><div style="font-size:.8rem;opacity:.85;margin-bottom:4px"><span id="cbcs-att">0</span> of <span id="cbcs-tot">0</span> answered</div><div class="sb-prog"><div class="sb-fill" id="cbcs-prog" style="width:0%"></div></div></div>
+    <button onclick="resetCBCS()" style="background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,255,255,.3);padding:6px 14px;border-radius:12px;font-weight:700;cursor:pointer;font-size:.8rem;font-family:'Plus Jakarta Sans',sans-serif">↺ Reset</button>
+  </div>
+  <div id="cbcs-container"></div>
+</div>
+
+<!-- ══ S10: MEMORY TRICKS ══ -->
+<div class="sec" id="s10">
+  <div class="sec-label">Section 10</div>
+  <h2 class="sec-hd">Memory Tricks & Coding Mnemonics</h2>
+  <p class="sec-sub">Smart memory aids for the concepts that trip students up most. Click the flashcards to flip them.</p>
+
+  <div class="card-grid" id="mem-flashcards"></div>
+
+  <hr class="dv">
+  <h3 style="font-size:1rem;color:var(--ink);margin-bottom:14px">📌 High-Yield Memory Rules</h3>
+  <div id="mem-rules"></div>
+</div>
+
+<!-- ══ S11: QUICK QUIZ ══ -->
+<div class="sec" id="s11">
+  <div class="sec-label">Section 11</div>
+  <h2 class="sec-hd">Quick Quiz — 40 Questions</h2>
+  <p class="sec-sub">Mixed difficulty. Immediate feedback with rationale after every answer. Covers all ICD-10-CM reasoning skills.</p>
+
+  <div class="score-banner">
+    <div><div class="sb-num" id="quiz-score">0</div><div style="font-size:.8rem;opacity:.85">Correct</div></div>
+    <div style="flex:1"><div style="font-size:.8rem;opacity:.85;margin-bottom:4px"><span id="quiz-att">0</span> of <span id="quiz-tot">0</span> answered</div><div class="sb-prog"><div class="sb-fill" id="quiz-prog" style="width:0%"></div></div></div>
+    <button onclick="resetQuiz()" style="background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,255,255,.3);padding:6px 14px;border-radius:12px;font-weight:700;cursor:pointer;font-size:.8rem;font-family:'Plus Jakarta Sans',sans-serif">↺ Retry</button>
+  </div>
+  <div id="quiz-container"></div>
+</div>
+
+<!-- ══ S12: RAPID REVIEW ══ -->
+<div class="sec" id="s12">
+  <div class="sec-label">Section 12</div>
+  <h2 class="sec-hd">⚡ Rapid Review</h2>
+  <p class="sec-sub">Your exam-day study sheet. The process, the traps, the cheat sheets — everything condensed.</p>
+
+  <div id="rr-container"></div>
+  <div style="text-align:center;margin-top:28px;padding:18px;background:var(--white);border-radius:var(--r);border:1px solid var(--border)">
+    <p style="font-size:.85rem;color:var(--ink3)">Designed and Curriculum Developed by <strong style="color:var(--ink)">Hilary Homaii</strong></p>
+    <p style="font-size:.78rem;color:var(--ink3);margin-top:4px">ICD-10-CM Interactive Coding Mastery Lab · CBCS Preparation · Diagnosis Coding Reasoning</p>
+  </div>
+</div>
+
+<script>
+// ── NAV ──
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.sec').forEach(function(x){x.classList.remove('active');});
+    t.classList.add('active');
+    document.getElementById(t.dataset.s).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+function toggleAcc(id){document.getElementById(id).classList.toggle('open');}
+
+// ══ S7: CONFUSING DIAGNOSES ══
+var CONFUSED = [
+  {
+    title:'Symptom Code vs Confirmed Diagnosis Code',sys:'All Systems',
+    student:'Students code symptoms (like cough, fatigue, chest pain) even when a confirmed diagnosis is in the Assessment.',
+    detail:'The deciding question: Is a confirmed diagnosis documented in the Assessment/Diagnosis section? If YES → code the diagnosis, NOT the symptoms.',
+    pairs:[
+      {wrong:'R05 — Cough (symptom)',right:'J18.9 — Pneumonia, unspecified organism (diagnosis)',doc:'Assessment: Pneumonia confirmed on CXR',why:'Confirmed diagnosis in Assessment → code diagnosis. Cough is a symptom of the pneumonia.'},
+      {wrong:'R73.09 — Other abnormal glucose (symptom/lab)',right:'E11.9 — Type 2 diabetes mellitus without complications',doc:'Assessment: Type 2 diabetes mellitus newly diagnosed',why:'Confirmed diagnosis documented → code the DM, not the elevated glucose.'},
+    ]
+  },
+  {
+    title:'Acute vs Chronic — Same Condition, Different Code',sys:'Respiratory / GI / Musculoskeletal',
+    student:'Students use "unspecified" acuity when the provider clearly documented acute or chronic.',
+    detail:'If "acute" is in the documentation → use acute code. If "chronic" → use chronic code. If neither → use unspecified.',
+    pairs:[
+      {wrong:'Sinusitis, unspecified (J32.9)',right:'Acute maxillary sinusitis (J01.00)',doc:'Assessment: Acute maxillary sinusitis',why:'"Acute" is documented AND "maxillary" (site) is documented — use both specificity layers.'},
+      {wrong:'Gastritis, unspecified',right:'Chronic gastritis, unspecified as to type',doc:'Assessment: Chronic gastritis',why:'"Chronic" is documented — capture that acuity detail. Unspecified is only appropriate when acuity is not stated.'},
+    ]
+  },
+  {
+    title:'Site-Specific vs General Diagnosis',sys:'Musculoskeletal / Skin',
+    student:'Students use a general/unspecified body part code when the documentation clearly states the specific site.',
+    detail:'When the provider documents the specific body site or laterality, that detail must be reflected in the code.',
+    pairs:[
+      {wrong:'Cellulitis, unspecified (L03.90)',right:'Cellulitis of left lower leg (L03.116)',doc:'Assessment: Cellulitis of left lower leg',why:'Site (lower leg) and laterality (left) are both documented. The specific code exists — use it.'},
+      {wrong:'Osteoarthritis, unspecified',right:'Primary osteoarthritis, right knee',doc:'Assessment: Primary osteoarthritis, right knee',why:'Type (primary), joint (knee), laterality (right) all documented. All three layers of specificity captured.'},
+    ]
+  },
+  {
+    title:'Infectious Cause Documented vs Not Documented',sys:'Respiratory / GI / Urinary',
+    student:'Students either assume an organism is present without documentation, or miss the organism when it IS documented.',
+    detail:'If the provider or lab documents the causative organism → use the organism-specific code. If not documented → use unspecified organism code.',
+    pairs:[
+      {wrong:'Pneumonia due to Streptococcus pneumoniae (when organism not in note)',right:'Pneumonia, unspecified organism (J18.9)',doc:'Assessment: Pneumonia (no organism identified)',why:'No organism documented. J18.9 is accurate — not a mistake. Never assume the organism.'},
+      {wrong:'Pneumonia, unspecified (J18.9)',right:'Pneumonia due to Streptococcus pneumoniae (J13)',doc:'Assessment: Pneumococcal pneumonia confirmed by sputum culture',why:'Organism IS documented and confirmed. Code the specific organism — J18.9 would be under-coding.'},
+    ]
+  },
+  {
+    title:'Similar Conditions in the Same Body System',sys:'GI / Respiratory',
+    student:'Students confuse diagnoses that sound similar but have different codes and clinical meanings.',
+    detail:'Look at the EXACT condition documented — even small wording differences indicate different conditions.',
+    pairs:[
+      {wrong:'Crohn disease (inflammatory bowel disease)',right:'Irritable bowel syndrome (IBS)',doc:'Assessment: Irritable bowel syndrome without diarrhea',why:'Crohn disease is an inflammatory bowel disease. IBS is a functional GI disorder — different condition, different code category.'},
+      {wrong:'Asthma (J45)',right:'COPD (J44)',doc:'Assessment: COPD — patient is a 65-year-old with 40 pack-year smoking history',why:'COPD and asthma are different diagnoses with different code categories. The provider documented COPD. Age and smoking history support COPD.'},
+    ]
+  },
+  {
+    title:'Type Specified vs Unspecified',sys:'Endocrine / ENT',
+    student:'Students use unspecified when the type is clearly documented, or use a specific type when it is not documented.',
+    detail:'Code the type documented. Use unspecified ONLY when type is not stated.',
+    pairs:[
+      {wrong:'Hypothyroidism, unspecified',right:'Primary hypothyroidism (autoimmune / Hashimoto)',doc:'Assessment: Autoimmune hypothyroidism (Hashimoto disease)',why:'Type is documented (autoimmune/Hashimoto) — use the specific type code.'},
+      {wrong:'Type 1 diabetes mellitus (E10)',right:'Type 2 diabetes mellitus (E11)',doc:'Assessment: Diabetes mellitus, type 2',why:'Type 2 is explicitly documented. E10 (Type 1) would be a coding error.'},
+    ]
+  },
+];
+
+var confEl = document.getElementById('confused-container');
+CONFUSED.forEach(function(c,i){
+  var div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">' +
+    '<h3 style="font-size:.95rem;color:var(--blue)">' + c.title + '</h3>' +
+    '<span class="tag tag-blue">' + c.sys + '</span></div>' +
+    '<div class="ib-red" style="margin-bottom:8px"><strong>❌ Student Mistake:</strong> ' + c.student + '</div>' +
+    '<div class="ib-green" style="margin-bottom:14px"><strong>✅ What Decides the Code:</strong> ' + c.detail + '</div>' +
+    c.pairs.map(function(p){
+      return '<div style="background:#fafbfd;border-radius:8px;border:1px solid var(--border);padding:14px;margin-bottom:10px">' +
+        '<div class="lbl">Documentation Context</div>' +
+        '<p style="font-size:.88rem;font-style:italic;margin-bottom:10px;color:var(--ink)">' + p.doc + '</p>' +
+        '<div class="g2"><div><div class="lbl" style="color:var(--red)">❌ Wrong Choice</div><div style="font-size:.87rem;color:var(--red);font-weight:600">' + p.wrong + '</div></div>' +
+        '<div><div class="lbl" style="color:var(--green)">✅ Correct Choice</div><div style="font-size:.87rem;color:var(--green);font-weight:600">' + p.right + '</div></div></div>' +
+        '<div class="ib-purple" style="margin-top:8px;font-size:.85rem"><strong>Why:</strong> ' + p.why + '</div></div>';
+    }).join('');
+  confEl.appendChild(div);
+});
+
+// ══ S8: BODY SYSTEM DRILLS ══
+var SYSTEMS = [
+  { id:'resp', label:'🫁 Respiratory', chapter:'J00–J99',
+    summary:'Respiratory coding requires attention to: type of condition (asthma vs COPD vs pneumonia), acuity (acute vs chronic vs exacerbation), organism (if documented), and severity (for asthma).',
+    mainTerms:['Pneumonia','Asthma','Bronchitis','Sinusitis','COPD','Pharyngitis','Laryngitis','Rhinitis'],
+    traps:['Confusing asthma and COPD (different chapters, different mechanisms)','Forgetting "with acute exacerbation" when documented','Using pneumonia, unspecified when organism IS documented','Coding symptoms (cough, wheeze) instead of the confirmed respiratory diagnosis'],
+    drills:[
+      {dx:'Acute exacerbation of moderate persistent asthma',opts:['Asthma, unspecified','Acute bronchitis','Moderate persistent asthma with acute exacerbation','COPD with acute exacerbation'],correct:2,reason:'Three details documented: type (moderate persistent), condition (asthma), status (acute exacerbation). All three must be captured.'},
+      {dx:'Pneumonia due to Haemophilus influenzae',opts:['Pneumonia, unspecified organism','Haemophilus influenzae pneumonia','Viral pneumonia','Lobar pneumonia'],correct:1,reason:'The specific organism (Haemophilus influenzae) is documented — use the organism-specific code, not unspecified.'},
+      {dx:'Chronic sinusitis, pansinusitis',opts:['Acute sinusitis','Sinusitis, unspecified','Chronic pansinusitis','Chronic maxillary sinusitis'],correct:2,reason:'"Chronic" (acuity) and "pansinusitis" (all sinuses) are both documented — use the most specific code available.'},
+    ]
+  },
+  { id:'gi', label:'🫄 GI / Digestive', chapter:'K00–K95',
+    summary:'GI coding requires identifying: the specific condition (GERD vs gastritis vs ulcer), presence of bleeding/complications, site within the GI tract, and whether a condition is acute/chronic.',
+    mainTerms:['GERD','Gastritis','Ulcer (gastric/duodenal)','Colitis','Hernia','Hemorrhoids','Appendicitis','Diverticulitis'],
+    traps:['Coding "abdominal pain" instead of confirmed GI diagnosis','Confusing IBS with inflammatory bowel disease','Missing "with bleeding" when it is documented','Using general ulcer code when site (gastric vs duodenal) is specified'],
+    drills:[
+      {dx:'Duodenal ulcer, acute, with hemorrhage',opts:['Gastric ulcer without hemorrhage','Duodenal ulcer, chronic, with hemorrhage','Duodenal ulcer, acute, with hemorrhage','Peptic ulcer, unspecified'],correct:2,reason:'Three layers: type (duodenal), acuity (acute), complication (hemorrhage). All documented — all captured.'},
+      {dx:'Ulcerative colitis with rectal bleeding',opts:['Irritable bowel syndrome','Crohn disease of large intestine','Ulcerative colitis without complications','Ulcerative colitis with rectal bleeding'],correct:3,reason:'"With rectal bleeding" is the documented complication. Missing it would under-code a significant complication.'},
+    ]
+  },
+  { id:'msk', label:'🦴 Musculoskeletal', chapter:'M00–M99',
+    summary:'MSK coding is highly specific by joint, bone, and laterality. Arthritis, fractures (in injuries chapter), and pain coding require careful attention to site and documentation.',
+    mainTerms:['Arthritis','Osteoarthritis','Arthralgia','Myalgia','Bursitis','Tendinitis','Back pain','Cervicalgia'],
+    traps:['Coding "knee pain" instead of confirmed arthritis diagnosis','Forgetting laterality when it is documented','Confusing primary vs secondary osteoarthritis','Using unspecified when site IS documented'],
+    drills:[
+      {dx:'Primary osteoarthritis, left hip',opts:['Osteoarthritis, unspecified','Pain in left hip','Primary osteoarthritis, left hip','Secondary osteoarthritis, hip'],correct:2,reason:'Type (primary), joint (hip), laterality (left) are all documented. Coding pain instead of OA would ignore the confirmed diagnosis.'},
+      {dx:'Low back pain',opts:['Lumbago (low back pain)','Lumbar radiculopathy','Lumbar disc herniation','Osteoporosis with pathological fracture'],correct:0,reason:'"Low back pain" (lumbago) — no radiculopathy, disc herniation, or specific cause documented. Code what is documented, not what you might assume.'},
+    ]
+  },
+  { id:'skin', label:'🩹 Skin', chapter:'L00–L99',
+    summary:'Skin coding depends on: the type of condition (cellulitis vs abscess vs dermatitis), the specific body site, laterality, and cause (for contact dermatitis).',
+    mainTerms:['Cellulitis','Abscess','Dermatitis','Eczema','Psoriasis','Ulcer','Wound infection'],
+    traps:['Confusing cellulitis and abscess (different conditions)','Forgetting site specificity — skin codes are highly site-specific','Using "unspecified" when site is documented','Confusing irritant vs allergic contact dermatitis'],
+    drills:[
+      {dx:'Allergic contact dermatitis due to plants (poison ivy)',opts:['Atopic dermatitis','Irritant contact dermatitis','Allergic contact dermatitis due to plants','Contact dermatitis, unspecified'],correct:2,reason:'Type (allergic contact), cause (plants/poison ivy) — both documented. "Irritant" is a different mechanism entirely.'},
+      {dx:'Abscess of right axilla',opts:['Cellulitis of right axilla','Abscess, unspecified','Abscess of right axilla','Wound infection, right arm'],correct:2,reason:'Abscess and cellulitis are different conditions. Site (axilla) and laterality (right) documented — use specific code.'},
+    ]
+  },
+  { id:'gu', label:'🫘 Genitourinary', chapter:'N00–N99',
+    summary:'GU coding: UTI site specificity, kidney disease staging (CKD), and reproductive system conditions. Remember: many GU conditions require documentation of the specific site or type.',
+    mainTerms:['Infection (urinary)','Cystitis','Pyelonephritis','Chronic kidney disease','Hematuria','Urinary incontinence'],
+    traps:['Using cystitis code when "UTI" only is documented','Confusing UTI with pyelonephritis','Missing CKD stage when documented','Coding symptoms (hematuria) instead of confirmed diagnosis'],
+    drills:[
+      {dx:'Chronic kidney disease, stage 4',opts:['CKD, unspecified','CKD, stage 3','CKD, stage 4','End-stage renal disease'],correct:2,reason:'"Stage 4" is specifically documented. Using unspecified or wrong stage is a coding error.'},
+      {dx:'Acute cystitis without hematuria',opts:['UTI, unspecified','Acute pyelonephritis','Acute cystitis without hematuria','Interstitial cystitis'],correct:2,reason:'Cystitis (bladder) specifically documented — not general UTI. Acute (acuity) and without hematuria (complication absent) both stated.'},
+    ]
+  },
+  { id:'endo', label:'🧬 Endocrine', chapter:'E00–E89',
+    summary:'Endocrine coding — especially diabetes — requires type (1 vs 2), and all documented complications. Thyroid disorders require type specification when documented.',
+    mainTerms:['Diabetes mellitus','Hypothyroidism','Hyperthyroidism','Obesity','Hyperlipidemia','Gout'],
+    traps:['Confusing Type 1 and Type 2 diabetes (completely different code categories)','Failing to code all documented diabetes complications','Using unspecified diabetes when type is documented','Confusing primary vs secondary hypothyroidism'],
+    drills:[
+      {dx:'Type 2 diabetes mellitus with diabetic mononeuropathy',opts:['Type 1 diabetes with neuropathy','Type 2 DM without complications','Type 2 DM with diabetic mononeuropathy','Mononeuropathy, unspecified'],correct:2,reason:'Type 2 (not Type 1), diabetes (confirmed), mononeuropathy (documented complication) — combination code captures both.'},
+      {dx:'Morbid obesity due to excess calories, BMI 42',opts:['Overweight','Obesity, unspecified','Morbid obesity due to excess calories','Obesity with alveolar hypoventilation'],correct:2,reason:'"Morbid obesity" and "due to excess calories" are both documented. BMI code is added as an additional code. "Obesity unspecified" under-codes the documented severity.'},
+    ]
+  },
+];
+
+var sysTabsEl = document.getElementById('sys-tabs');
+var sysContentEl = document.getElementById('sys-content');
+var sysAnswered = {};
+SYSTEMS.forEach(function(sys, si) {
+  var btn = document.createElement('button');
+  btn.className = 'sys-tab' + (si===0?' active':'');
+  btn.textContent = sys.label;
+  btn.onclick = function() {
+    document.querySelectorAll('.sys-tab').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    document.querySelectorAll('.sys-sec').forEach(function(s){s.classList.remove('active');});
+    document.getElementById('sys-' + sys.id).classList.add('active');
+  };
+  sysTabsEl.appendChild(btn);
+
+  var sec = document.createElement('div');
+  sec.className = 'sys-sec' + (si===0?' active':'');
+  sec.id = 'sys-' + sys.id;
+  sec.innerHTML = '<div class="card"><div class="ib-blue"><strong>Chapter:</strong> ' + sys.chapter + ' | ' + sys.summary + '</div>' +
+    '<div class="g2" style="margin-top:14px">' +
+    '<div><div class="lbl">Common Main Terms</div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px">' + sys.mainTerms.map(function(m){return '<span class="tag tag-blue">'+m+'</span>';}).join('') + '</div></div>' +
+    '<div><div class="lbl" style="color:var(--red)">Common Traps</div><ul class="lst" style="margin-top:4px">' + sys.traps.map(function(t){return '<li style="color:var(--red)">'+t+'</li>';}).join('') + '</ul></div>' +
+    '</div></div>' +
+    sys.drills.map(function(d, di) {
+      var eid = sys.id + '-' + di;
+      return '<div class="card" id="sd-card-' + eid + '">' +
+        '<div class="lbl">Documented Diagnosis</div>' +
+        '<div class="soap-note" style="margin-bottom:12px"><strong>"' + d.dx + '"</strong></div>' +
+        '<p style="font-size:.85rem;font-weight:600;color:var(--ink2);margin-bottom:8px">Which code description BEST matches?</p>' +
+        d.opts.map(function(o,j){return '<button class="opt" onclick="answerSys(\''+eid+'\','+j+','+d.correct+',this,\''+d.reason.replace(/'/g,"\\'")+'\')">' + String.fromCharCode(65+j) + '. ' + o + '</button>';}).join('') +
+        '<div class="rationale" id="sd-rat-' + eid + '"></div></div>';
+    }).join('');
+  sysContentEl.appendChild(sec);
+});
+function answerSys(eid, chosen, correct, btn, reason) {
+  if (sysAnswered[eid]) return; sysAnswered[eid] = true;
+  var card = document.getElementById('sd-card-' + eid);
+  card.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});
+  if (chosen === correct) btn.classList.add('correct');
+  else { btn.classList.add('wrong'); card.querySelectorAll('.opt')[correct].classList.add('show-c'); }
+  var rat = document.getElementById('sd-rat-' + eid);
+  rat.innerHTML = '<strong>' + (chosen===correct?'✅ Correct!':'❌ Not the best match.') + '</strong> ' + reason;
+  rat.classList.add('show');
+}
+
+// ══ S9: CBCS SCENARIOS ══
+var CBCS = [
+  {q:'A patient is seen for follow-up of hypertension and is also found to have chronic kidney disease, stage 2. The provider documents both conditions. Which code selection approach is most appropriate?',opts:['Code only hypertension since it is the primary reason for the visit','Code only CKD stage 2','Code hypertension with CKD (combination code) and a code for CKD stage 2','Code hypertension, CKD, and uremia as three separate codes'],correct:2,rat:'ICD-10-CM requires a combination code for hypertension with CKD (I13 range), plus an additional code for the CKD stage (N18.2 for stage 2). This assumes a causal relationship between hypertension and CKD per ICD-10-CM guidelines.',clue:'Hypertension + CKD = combination code category + CKD stage code',tags:['badge-hy']},
+  {q:'Assessment reads: "Type 2 diabetes mellitus — blood sugar well-controlled." What is the MAIN TERM for this diagnosis?',opts:['Blood sugar','Controlled','Diabetes','Type'],correct:2,rat:'"Diabetes" (or "Diabetes mellitus") is the main term in the Alphabetic Index. "Type 2," "controlled," and "blood sugar" are modifiers or subterms. You look up Diabetes → type 2 in the Index.',clue:'Main term = the condition name, not the modifier',tags:['badge-hy']},
+  {q:'A provider documents "upper respiratory infection." No specific organism or site is documented. Which code best fits?',opts:['Influenza with respiratory manifestations','Pneumonia, unspecified','Acute upper respiratory infection, unspecified','Sinusitis, acute, unspecified'],correct:2,rat:'"Upper respiratory infection" with no further specification = J06.9 (acute upper respiratory infection, unspecified). No organism documented = unspecified organism. This is the most accurate match for the documentation.',clue:'No organism + no specific site = unspecified upper respiratory infection',tags:['badge-uns']},
+  {q:'Provider documents: "Encounter for screening mammogram, no family history of breast cancer, patient is asymptomatic." Which code category best applies?',opts:['Malignant neoplasm of breast, unspecified','Lump in breast (symptom code)','Encounter for screening mammography (Z code)','Benign neoplasm of breast'],correct:2,rat:'This is a screening encounter with no symptoms or diagnosis. Z codes (Z12.31) are used for screening encounters. The patient is asymptomatic — no symptom or diagnosis code is appropriate.',clue:'Screening + asymptomatic = Z code for screening encounter',tags:['badge-trap']},
+  {q:'Assessment: "Mild intermittent asthma, not currently in exacerbation." Patient is seen for routine asthma management. Which code best matches?',opts:['Asthma, unspecified, with acute exacerbation','Mild intermittent asthma, uncomplicated','Severe persistent asthma','Acute bronchitis'],correct:1,rat:'"Mild intermittent" = severity type documented. "Not currently in exacerbation" = uncomplicated (no acute exacerbation). Code the documented severity and status: J45.20 (mild intermittent asthma, uncomplicated).',clue:'Severity (mild intermittent) + status (no exacerbation) = most specific code',tags:['badge-hy','badge-doc']},
+  {q:'A patient is seen for a sore throat. The provider\'s assessment reads "Streptococcal pharyngitis confirmed by rapid strep test." What is the main term AND key subterm?',opts:['Main term: Throat; subterm: sore','Main term: Pharyngitis; subterm: streptococcal','Main term: Streptococcal; subterm: infection','Main term: Infection; subterm: throat'],correct:1,rat:'"Pharyngitis" is the condition (main term). "Streptococcal" is the causative organism (subterm). The rapid strep test documented the cause — this allows a more specific code than pharyngitis, unspecified.',clue:'Confirmed organism = use organism-specific code',tags:['badge-hy']},
+  {q:'Documentation: "Patient has essential hypertension, well-controlled on medication." Which code is MOST appropriate?',opts:['Elevated blood pressure reading (R03.0)','Hypertensive crisis','Essential (primary) hypertension (I10)','Secondary hypertension'],correct:2,rat:'Confirmed diagnosis: essential hypertension. I10 = essential (primary) hypertension. "Well-controlled" does not change the code — hypertension is still coded even when controlled. "Elevated BP" is a symptom code used only when hypertension is NOT diagnosed.',clue:'"Essential" = primary hypertension = I10, regardless of whether controlled',tags:['badge-hy','badge-trap']},
+  {q:'A patient is admitted with right arm cellulitis. The provider documents "Cellulitis, right forearm." Which detail is most important for selecting the most specific code?',opts:['That it is cellulitis (general condition)','That the patient is in pain','The specific site (forearm) and laterality (right)','That antibiotics were prescribed'],correct:2,rat:'Cellulitis codes in ICD-10-CM are organized by body site. The specific site (forearm) and laterality (right) together identify the most specific code available. Pain and treatment are clinical details — not coding subterms.',clue:'Cellulitis: specificity = site + laterality',tags:['badge-doc']},
+  {q:'Assessment reads: "Chronic low back pain, no radiculopathy, no disc herniation, no specific diagnosis." Which code best fits?',opts:['Lumbar disc degeneration','Lumbar radiculopathy','Low back pain (lumbago)','Lumbar sprain'],correct:2,rat:'The provider documented low back pain as the diagnosis — no specific cause (radiculopathy, disc herniation) documented. Code what is documented: M54.5 (low back pain). Do not assume a cause not in the documentation.',clue:'No cause documented = code the symptom/sign as the diagnosis',tags:['badge-uns','badge-trap']},
+  {q:'Provider documents: "Iron deficiency anemia secondary to chronic blood loss." What should be coded?',opts:['Anemia, unspecified','Iron deficiency anemia due to chronic blood loss','Chronic blood loss only','Vitamin B12 deficiency anemia'],correct:1,rat:'The cause (iron deficiency), mechanism (due to chronic blood loss), and condition (anemia) are all documented. Code anemia due to chronic blood loss (D50.0) — this is the most specific code and captures the documented relationship.',clue:'Cause + type of anemia both documented = specific combination code',tags:['badge-hy','badge-doc']},
+  {q:'A patient is seen for a laceration of the left palm requiring sutures. It is the patient\'s initial visit for this injury. What additional specificity does ICD-10-CM require for injuries?',opts:['Infection status','Encounter type (initial, subsequent, or sequela)','The size of the laceration','Whether sutures or staples were used'],correct:1,rat:'ICD-10-CM injury codes (S and T codes) require a 7th character extension for encounter type: A = initial encounter, D = subsequent encounter, S = sequela. The visit type is clinically and administratively significant and must be captured.',clue:'Injuries need 7th character: A (initial), D (subsequent), S (sequela)',tags:['badge-hy']},
+  {q:'Assessment: "Nausea and vomiting of unknown etiology — workup ordered." No diagnosis confirmed. Which code applies?',opts:['Gastroenteritis, unspecified','Food poisoning','Nausea with vomiting, unspecified','Peptic ulcer disease'],correct:2,rat:'No confirmed diagnosis — the provider is still working up the cause. Code the documented symptoms: nausea with vomiting. In outpatient settings, code the most definitive finding available; when no diagnosis is confirmed, code the presenting symptoms.',clue:'No confirmed diagnosis in Assessment = code the documented symptom(s)',tags:['badge-uns']},
+  {q:'Which of the following code descriptions BEST matches: "Assessment: Allergic rhinitis due to tree pollen"?',opts:['Nonallergic rhinitis','Rhinitis, unspecified','Vasomotor rhinitis','Allergic rhinitis due to pollen'],correct:3,rat:'"Allergic rhinitis" is documented (not nonallergic or unspecified), and the cause (pollen — specifically tree pollen) is documented. J30.1 = allergic rhinitis due to pollen. This is more specific than "allergic rhinitis, unspecified."',clue:'"Allergic" + documented cause (pollen) = allergen-specific code',tags:['badge-cc']},
+  {q:'A provider documents "Type 2 diabetes mellitus, diet-controlled." No complications are mentioned. Which code is MOST accurate?',opts:['E10.9 — Type 1 diabetes mellitus without complications','E11.9 — Type 2 diabetes mellitus without complications','E13.9 — Other specified diabetes mellitus without complications','E11.65 — Type 2 DM with hyperglycemia'],correct:1,rat:'Type 2 documented = E11 category. "Diet-controlled" does not change the type 2 designation. "Without complications" — no complications mentioned = .9. E10 is Type 1. E11.65 (hyperglycemia) is not documented.',clue:'Type determines category (E10 vs E11). No complications documented = without complications subcode',tags:['badge-hy','badge-trap']},
+  {q:'What does it mean when a coder selects an "unspecified" ICD-10-CM code?',opts:['The coder was lazy and chose the first code available','The documentation does not contain the detail needed for a more specific code','The patient has an unusual condition not found in ICD-10-CM','The condition was not confirmed by the provider'],correct:1,rat:'"Unspecified" codes are correct and appropriate when the documentation does NOT contain the specific detail (type, cause, site, laterality) required for a more specific code. Choosing unspecified when specificity IS documented is the error — not using unspecified when it is warranted.',clue:'Unspecified = documentation lacks the required detail. It is accurate when used correctly.',tags:['badge-uns','badge-trap']},
+  {q:'Assessment: "Otitis media, right ear, chronic serous." Which code best fits?',opts:['Otitis externa, right ear','Acute suppurative otitis media, right ear','Chronic serous otitis media, right ear','Otitis media, unspecified, right ear'],correct:2,rat:'Three documented layers: type (serous), acuity (chronic), laterality (right). All three are captured in the specific code. "Unspecified" would under-code. "Suppurative" is a different type not documented.',clue:'OM specificity: type (serous/suppurative) + acuity (acute/chronic) + laterality',tags:['badge-hy','badge-doc']},
+  {q:'A nurse practitioner documents "Left knee medial meniscus tear, current injury." What is the correct encounter type for this initial visit?',opts:['Subsequent encounter (D)','Sequela (S)','Initial encounter (A)','Not applicable — injuries do not need encounter types'],correct:2,rat:'First visit for the injury = initial encounter = 7th character A. Subsequent encounter (D) = follow-up visits. Sequela (S) = late effects of a healed injury. Injury codes always require the encounter character.',clue:'First visit for injury = A (initial). Follow-up = D. Late effect = S.',tags:['badge-hy']},
+  {q:'Assessment: "Hypertensive heart disease without heart failure." Which chapter/category applies?',opts:['Chapter 9 (Circulatory) — I11 category','Chapter 4 (Endocrine)','Chapter 10 (Respiratory)','Chapter 13 (Musculoskeletal)'],correct:0,rat:'Hypertensive heart disease falls in Chapter 9 (Diseases of the Circulatory System), specifically the I11 category. This is a combination code capturing hypertension with heart disease.',clue:'Hypertension + heart disease = Chapter 9, I11 combination category',tags:['badge-hy']},
+  {q:'Which documentation detail would change an anemia code from "unspecified" to a more specific selection?',opts:['Patient\'s age','The specific type or cause of anemia (iron deficiency, B12, chronic disease, etc.)','Whether the patient received a transfusion','The patient\'s hemoglobin level only'],correct:1,rat:'Anemia specificity is driven by the cause or type (iron deficiency, vitamin B12 deficiency, anemia of chronic disease, sickle cell, etc.). Without a documented type/cause, D64.9 (anemia, unspecified) is appropriate. With type documented → use the type-specific code.',clue:'Anemia specificity = documented type or cause',tags:['badge-uns','badge-doc']},
+  {q:'A patient is treated for a sprain of the left ankle at an urgent care center. The patient returns one week later for suture removal from an unrelated laceration. Which 7th character applies to the ankle sprain code at this follow-up visit?',opts:['A — initial encounter','D — subsequent encounter','S — sequela','No 7th character needed'],correct:1,rat:'The ankle sprain is being addressed at a follow-up visit — this is a subsequent encounter (D). The 7th character is based on the specific encounter type for THAT condition — initial (A), subsequent (D), or sequela (S). Follow-up visits = D.',clue:'Follow-up visit for injury = D (subsequent encounter)',tags:['badge-hy','badge-trap']},
+  {q:'Documentation: "Patient presents for routine physical exam. No complaints. No acute findings." Which code category best describes this encounter?',opts:['Fatigue (symptom code)','Encounter for general adult medical examination without abnormal findings (Z code)','Hypertension screening','Diabetes check-up'],correct:1,rat:'A routine physical exam with no problems = Z00.00 or Z00.01 (encounter for general adult medical exam). Z codes are used for encounters without illness or injury when the purpose is health maintenance or screening.',clue:'Healthy visit, no complaints = Z code for exam encounter',tags:['badge-hy']},
+  {q:'Provider assessment: "Diabetes mellitus — patient reports glucose has been elevated but provider has not yet confirmed type." Which code should be used?',opts:['E10.9 — Type 1 DM without complications','E11.9 — Type 2 DM without complications','E13.9 — Other specified DM','R73.09 — Other abnormal glucose'],correct:3,rat:'No type of diabetes has been confirmed by the provider. "Unconfirmed" diagnoses in outpatient settings are NOT coded as confirmed. Only code what the provider documents as confirmed. Elevated glucose = R73.09 until the type/diagnosis is confirmed.',clue:'Outpatient rule: do not code unconfirmed diagnoses — code symptoms or findings',tags:['badge-trap']},
+  {q:'A patient is diagnosed with a Stage 3 pressure ulcer of the right heel. What specificity elements are needed?',opts:['Just the word "ulcer"','Ulcer + site','Ulcer + site + laterality + stage','Ulcer + site + whether infected'],correct:2,rat:'Pressure ulcer codes are highly specific: condition (pressure ulcer), site (heel), laterality (right), and stage (Stage 3 or unstageable). All are documented and all must be captured.',clue:'Pressure ulcers: site + laterality + stage all required for full specificity',tags:['badge-hy','badge-doc']},
+  {q:'Which statement BEST describes when to use "other specified" versus "unspecified" codes?',opts:['"Other specified" when unknown; "Unspecified" when condition is rare','Both mean the same thing','Other specified = condition IS identified but no exact code exists; Unspecified = condition detail is unknown/not documented','Other specified is always more specific than a named code'],correct:2,rat:'"Other specified" (NEC): the condition IS clearly identified but does not fit any existing specific code. "Unspecified" (NOS): the detail needed for a more specific code is not documented or unknown. They are fundamentally different clinical situations.',clue:'Other specified = known, no fitting code. Unspecified = detail unknown or not documented.',tags:['badge-uns','badge-hy']},
+  {q:'Assessment: "Generalized anxiety disorder." Provider did not specify severity. Which code approach is most accurate?',opts:['Code anxiety, unspecified (F41.9)','Code generalized anxiety disorder (F41.1)','Code panic disorder','Code depression with anxious distress'],correct:1,rat:'"Generalized anxiety disorder" IS a specific documented diagnosis — F41.1. The provider named the specific anxiety disorder. "Anxiety, unspecified" (F41.9) would be less specific than what is documented.',clue:'Named condition documented = use the specific code, not unspecified',tags:['badge-cc']},
+  {q:'A coder cannot find the exact phrase "burning mouth syndrome" in the ICD-10-CM Index. What is the BEST next step?',opts:['Use "oral disease, unspecified" as the only available code','Look under "Syndrome" → burning mouth OR under "Glossodynia" (the clinical term for burning mouth)','Code the symptom "burning sensation, mouth"','The condition cannot be coded'],correct:1,rat:'When an exact phrase is not found, look for: (1) alternate clinical terms for the condition, (2) the main entry "Syndrome" with subterms, or (3) eponyms. Burning mouth syndrome is found under Glossodynia or Syndrome → burning mouth in ICD-10-CM.',clue:'Phrase not found → try alternate terms, syndrome entries, or eponyms',tags:['badge-trap']},
+  {q:'Which of these documentation clues would most clearly indicate an "acute" code is appropriate?',opts:['The patient has had this condition for years','Provider writes "new onset," "sudden onset," or "acute"','The patient is on a long-term prescription','The patient denies symptoms'],correct:1,rat:'Acuity in ICD-10-CM is driven by provider documentation. Words like "new onset," "sudden onset," "acute," or "exacerbation" trigger the acute code selection. Chronic conditions are typically long-standing, managed over time.',clue:'Provider\'s acuity words drive acute vs chronic coding',tags:['badge-hy']},
+  {q:'An adult patient has no documented diagnosis. The SOAP note Assessment reads "Rule out appendicitis." What should be coded in the outpatient setting?',opts:['Appendicitis, unspecified','Acute appendicitis','Abdominal pain, right lower quadrant (the presenting symptom)','Encounter for observation'],correct:2,rat:'In outpatient/ambulatory settings: "rule out" diagnoses are NOT coded as confirmed. Code the documented signs/symptoms instead. If the Assessment says "rule out appendicitis" — code the presenting symptom (e.g., RLQ abdominal pain) — not appendicitis.',clue:'Outpatient + "rule out" = code symptoms, NOT the suspected condition',tags:['badge-trap','badge-hy']},
+  {q:'The ICD-10-CM Index leads a coder to code K57.30. The coder should NEXT:',opts:['Submit the code immediately — the Index is sufficient','Verify the code in the Tabular List before finalizing','Check a billing software shortcut','Ask the provider to confirm the code number'],correct:1,rat:'Always verify in the Tabular List. The Index gives a starting point — the Tabular gives the full description, instructional notes, additional character requirements, excludes notes, and code first/use additional code instructions. Never finalize a code from the Index alone.',clue:'Index = find. Tabular = verify and finalize. Always.',tags:['badge-hy']},
+  {q:'Patient is being treated for Parkinson disease with dementia. The provider documents both conditions and notes the dementia is due to the Parkinson disease. Which coding approach is correct?',opts:['Code only Parkinson disease since dementia is a symptom','Code only dementia since it is more serious','Code both: the underlying disease (Parkinson) sequenced first, then the manifestation (dementia)','Code dementia first, Parkinson second'],correct:2,rat:'ICD-10-CM etiology/manifestation convention: code the UNDERLYING CONDITION (Parkinson disease) first, followed by the MANIFESTATION (dementia). The Tabular will often indicate "Code first" and "In diseases classified elsewhere" for manifestation codes.',clue:'Etiology/manifestation: underlying disease first, manifestation code second',tags:['badge-hy','badge-cc']},
+  {q:'A provider documents "hypertension with stage 3 chronic kidney disease." The patient has no documented heart disease. Which code reflects the most accurate interpretation?',opts:['I13 — Hypertensive heart and chronic kidney disease','I12 — Hypertensive chronic kidney disease (appropriate stage)','I10 — Essential hypertension only','N18.3 — CKD stage 3 only'],correct:1,rat:'Hypertension + CKD (without heart disease) = I12 category. I13 requires BOTH heart disease AND CKD, which is not documented. I10 alone ignores the CKD. N18.3 alone ignores the hypertension. I12 + N18.3 together is the correct pair.',clue:'HTN + CKD (no heart disease) = I12. HTN + heart disease + CKD = I13.',tags:['badge-hy','badge-trap']},
+];
+
+var cbcsScore=0,cbcsAtt=0;
+var cbcsAnswered={};
+var cbcsEl = document.getElementById('cbcs-container');
+document.getElementById('cbcs-tot').textContent = CBCS.length;
+
+function buildCBCS(){
+  cbcsEl.innerHTML='';
+  CBCS.forEach(function(q,i){
+    var div=document.createElement('div');div.className='card';
+    var tagsHTML=(q.tags||[]).map(function(t){var labels={'badge-hy':'⭐ High-Yield','badge-doc':'📄 Doc-Driven','badge-cc':'⚡ Commonly Confused','badge-trap':'🚨 Trap','badge-uns':'❓ Unspecified'};return '<span class="badge '+t+'">'+(labels[t]||t)+'</span>';}).join(' ');
+    div.innerHTML='<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">'+
+      '<p style="font-size:.88rem;font-weight:600;color:var(--ink);flex:1"><span style="color:var(--blue);margin-right:6px;font-family:\'Lora\',serif">Q'+(i+1)+'.</span>'+q.q+'</p>'+
+      '<div style="flex-shrink:0">'+tagsHTML+'</div></div>'+
+      q.opts.map(function(o,j){return '<button class="opt" onclick="answerCBCS('+i+','+j+','+q.correct+',this)">'+String.fromCharCode(65+j)+'. '+o+'</button>';}).join('')+
+      '<div class="rationale" id="cbcs-rat-'+i+'"></div>';
+    cbcsEl.appendChild(div);
+  });
+}
+function answerCBCS(i,chosen,correct,btn){
+  if(cbcsAnswered[i])return;cbcsAnswered[i]=true;cbcsAtt++;
+  var card=btn.closest('.card');
+  card.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});
+  if(chosen===correct){btn.classList.add('correct');cbcsScore++;}
+  else{btn.classList.add('wrong');card.querySelectorAll('.opt')[correct].classList.add('show-c');}
+  var rat=document.getElementById('cbcs-rat-'+i);
+  rat.innerHTML='<strong>'+(chosen===correct?'✅ Correct!':'❌ Not the best answer.')+'</strong><br><br>'+
+    '<strong>Why this answer:</strong> '+CBCS[i].rat+'<br><br>'+
+    '<strong>🔑 Key clue:</strong> '+CBCS[i].clue;
+  rat.classList.add('show');
+  document.getElementById('cbcs-score').textContent=cbcsScore;
+  document.getElementById('cbcs-att').textContent=cbcsAtt;
+  document.getElementById('cbcs-prog').style.width=(cbcsAtt/CBCS.length*100)+'%';
+}
+function resetCBCS(){cbcsScore=0;cbcsAtt=0;cbcsAnswered={};document.getElementById('cbcs-score').textContent=0;document.getElementById('cbcs-att').textContent=0;document.getElementById('cbcs-prog').style.width='0%';buildCBCS();}
+buildCBCS();
+
+// ══ S10: MEMORY TRICKS ══
+var MEM_CARDS = [
+  {front:'INDEX vs TABULAR',back:'Index = FIND the code range.\nTabular = VERIFY and FINALIZE.\nNEVER code from the Index alone.'},
+  {front:'Symptom vs Diagnosis',back:'Confirmed diagnosis documented? → Code the DIAGNOSIS.\nNo confirmed diagnosis? → Code the SYMPTOM/SIGN.'},
+  {front:'Unspecified Is OK When...',back:'...the documentation does NOT contain\nthe specific type, cause, site, or laterality\nneeded for a more specific code.'},
+  {front:'Main Term Rule',back:'Main term = the CONDITION or DISEASE\n(not the body part, not the modifier).\nAcute sinusitis → look up SINUSITIS.'},
+  {front:'Laterality',back:'Right = right code.\nLeft = left code.\nBilateral = bilateral (if available).\nNot documented = unspecified.'},
+  {front:'7th Character for Injuries',back:'A = Initial encounter (first visit)\nD = Subsequent (follow-up)\nS = Sequela (late effect)\nRequired for all S/T injury codes.'},
+  {front:'Other Specified vs Unspecified',back:'Other Specified (NEC) = condition IS known,\nbut no exact code fits.\nUnspecified (NOS) = detail is unknown\nor not documented.'},
+  {front:'Acute vs Chronic',back:'Provider says "acute" → acute code.\nProvider says "chronic" → chronic code.\nNothing specified → unspecified acuity.'},
+  {front:'Outpatient Rule: Rule Out',back:'"Rule out," "possible," "suspected" diagnoses\nare NOT coded as confirmed in outpatient.\nCode the documented SYMPTOMS instead.'},
+  {front:'Combination Codes',back:'One code captures BOTH a disease\nAND its complication.\nExample: DM Type 2 with CKD\n→ one combination code in E11 category.'},
+  {front:'Etiology / Manifestation',back:'Underlying condition FIRST.\nManifestation (caused by it) SECOND.\nTabular will say "Code first" or\n"In diseases classified elsewhere."'},
+  {front:'Documentation Drives the Code',back:'You can ONLY code what the provider\nhas documented. Never assume, guess,\nor add detail not in the note.'},
+];
+var fcEl = document.getElementById('mem-flashcards');
+MEM_CARDS.forEach(function(fc,i){
+  var div=document.createElement('div');
+  div.className='fc-wrap';
+  div.innerHTML='<div class="fc" id="fc-'+i+'"><div class="fc-f"><div class="fc-lbl">Concept</div><div class="fc-txt">'+fc.front+'</div><div style="font-size:.65rem;opacity:.5;margin-top:8px">click to flip</div></div><div class="fc-b"><div class="fc-lbl">Rule</div><div class="fc-txt" style="font-size:.82rem;font-weight:400;white-space:pre-line">'+fc.back+'</div></div></div>';
+  div.onclick=function(){document.getElementById('fc-'+i).classList.toggle('flip');};
+  fcEl.appendChild(div);
+});
+
+var MEM_RULES = [
+  {icon:'🎯',title:'The Two-Step Rule',color:'var(--blue)',text:'Step 1: Find in the INDEX (Alphabetic). Step 2: Verify in the TABULAR. This sequence is non-negotiable. The Index gives a starting range; the Tabular gives the full code, notes, and specificity options.'},
+  {icon:'📌',title:'The Main Term Shortcut',color:'var(--green)',text:'Ask: "What is the condition/disease/injury?" That word is usually the main term. Ignore adjectives (acute, severe, bilateral), body parts, and causes until you\'re under the main term looking for subterms.'},
+  {icon:'❓',title:'The Unspecified Checklist',color:'var(--orange)',text:'Before using "unspecified," ask: (1) Is the type documented? (2) Is the cause documented? (3) Is the site documented? (4) Is the laterality documented? If all are NO → unspecified is correct and accurate.'},
+  {icon:'📋',title:'The Documentation Drives Everything',color:'var(--purple)',text:'You cannot code what is not documented. You cannot add specificity the provider did not state. If you want a more specific code, query the provider — do not assume.'},
+  {icon:'🔀',title:'Symptom vs Diagnosis Decision',color:'var(--red)',text:'Look at the Assessment section. Is a confirmed diagnosis there? Code it. Are only symptoms documented in Assessment? Code the symptoms. Never code symptoms that are part of a confirmed, documented diagnosis.'},
+  {icon:'🏗️',title:'Chapters Tell You If You\'re Lost',color:'var(--teal)',text:'Memorize letter ranges for major chapters. If your respiratory condition code starts with K (GI), or your diabetes code starts with J (respiratory) — check your work. Knowing chapters prevents major category errors.'},
+];
+var mrEl = document.getElementById('mem-rules');
+MEM_RULES.forEach(function(r){
+  var div=document.createElement('div');div.className='mem-card';div.style.borderTopColor=r.color;
+  div.innerHTML='<h4 style="font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:8px;color:'+r.color+'">'+r.icon+' '+r.title+'</h4><p style="font-size:.88rem;line-height:1.7;color:var(--ink2)">'+r.text+'</p>';
+  mrEl.appendChild(div);
+});
+
+// ══ S11: QUIZ (40 questions) ══
+var QUIZ_Q = [
+  {q:'What is the FIRST step in ICD-10-CM coding?',opts:['Look in the Tabular List','Search a billing database','Find the main term in the Alphabetic Index','Ask the physician for the code'],correct:2,rat:'Always start in the Alphabetic Index to find the code range, then verify in the Tabular List. Starting in the Tabular is a common error.'},
+  {q:'Which of the following is the MAIN TERM for "acute bronchitis"?',opts:['Acute','Respiratory','Bronchitis','Lung'],correct:2,rat:'"Bronchitis" is the condition — the main term. "Acute" is a modifier/subterm found under Bronchitis in the Index.'},
+  {q:'A confirmed diagnosis is documented in the Assessment. What should be coded?',opts:['All symptoms listed in the Subjective','The confirmed diagnosis','The lab values','The medications prescribed'],correct:1,rat:'In outpatient settings, when a confirmed diagnosis is documented, code the diagnosis — not the symptoms that led to it.'},
+  {q:'What does "code to the highest level of specificity" mean?',opts:['Always use a 7-character code','Use the most detailed code that is supported by the documentation','Use the most expensive code','Add more codes for more reimbursement'],correct:1,rat:'Use the most specific code the documentation supports — not more (upcoding), not less (undercoding). Documentation is the guide.'},
+  {q:'A provider documents "sinusitis" with no further detail. Which code type is appropriate?',opts:['Acute maxillary sinusitis','Sinusitis, unspecified — if no further type/acuity is documented','Chronic sinusitis','Pansinusitis'],correct:1,rat:'No type or acuity documented → unspecified. Never add specificity the documentation does not contain.'},
+  {q:'What does the 7th character "A" mean in an injury code?',opts:['Allergic reaction','Anatomic site','Initial encounter','Annual visit'],correct:2,rat:'7th character A = initial encounter (first visit for the injury). D = subsequent encounter. S = sequela.'},
+  {q:'In outpatient settings, how should "rule out appendicitis" be coded?',opts:['As appendicitis, unspecified','As the presenting sign or symptom (e.g., abdominal pain)','As a Z code','As appendicitis, suspected'],correct:1,rat:'Outpatient rule: "rule out," "possible," and "suspected" diagnoses are NOT coded as confirmed. Code the documented symptoms.'},
+  {q:'Which ICD-10-CM code chapter covers diabetes mellitus?',opts:['Chapter 9 (I codes)','Chapter 10 (J codes)','Chapter 4 (E codes)','Chapter 5 (F codes)'],correct:2,rat:'Diabetes mellitus falls in Chapter 4 (Endocrine, Nutritional, Metabolic Diseases) — E10 for Type 1, E11 for Type 2.'},
+  {q:'What is the difference between "other specified" and "unspecified" codes?',opts:['They are interchangeable','Other specified = condition known but no exact code exists; Unspecified = detail not documented/unknown','Unspecified is more specific','Other specified is always wrong'],correct:1,rat:'"Other specified" = condition IS identified, no fitting code. "Unspecified" = detail unknown or not documented. Different clinical situations.'},
+  {q:'Which main term would you search for "hypertensive heart disease"?',opts:['Heart','Disease','Hypertension','Cardiac'],correct:2,rat:'Look under "Hypertension" in the Index, then find the subterm "heart" → with or without heart failure to find the correct combination code.'},
+  {q:'A patient is seen for right knee pain. The Assessment says "Right knee osteoarthritis, primary." What should NOT be coded separately?',opts:['Right','Primary','Knee pain (symptom)','Osteoarthritis'],correct:2,rat:'When a confirmed diagnosis is documented, the symptoms (knee pain) that are part of that condition are NOT coded separately. Code the osteoarthritis.'},
+  {q:'What does "essential hypertension" mean in ICD-10-CM coding terms?',opts:['Hypertension that is dangerous','Primary hypertension with no identified secondary cause','Hypertension requiring immediate treatment','Hypertension listed on every problem list'],correct:1,rat:'"Essential" = primary = no identified secondary cause. Code: I10. This is the most common hypertension code.'},
+  {q:'Which chapter covers respiratory conditions in ICD-10-CM?',opts:['Chapter 9 (I codes)','Chapter 13 (M codes)','Chapter 10 (J codes)','Chapter 14 (N codes)'],correct:2,rat:'Respiratory system conditions = Chapter 10 = J00–J99. Pneumonia, asthma, COPD, sinusitis — all in this chapter.'},
+  {q:'A patient has iron deficiency anemia. What is the main term?',opts:['Iron','Deficiency','Anemia','Blood'],correct:2,rat:'"Anemia" is the main term. "Iron deficiency" is the subterm under Anemia in the Alphabetic Index.'},
+  {q:'When coding cellulitis, which details are most important for specificity?',opts:['The patient\'s age and weight','The specific body site and laterality (right/left)','Whether antibiotics were prescribed','The type of bacteria'],correct:1,rat:'Cellulitis codes in ICD-10-CM are organized by body site and laterality. Both must be in the documentation for a specific code.'},
+  {q:'Documentation: "Acute exacerbation of chronic obstructive pulmonary disease." What is coded?',opts:['COPD, unspecified','Asthma with acute exacerbation','COPD with acute exacerbation','Acute bronchitis'],correct:2,rat:'"With acute exacerbation" is documented — this specific combination must be captured. J44.1 = COPD with acute exacerbation.'},
+  {q:'What does the Tabular List provide that the Index does NOT?',opts:['The main term entry','A starting code range','Full code descriptions, instructional notes, excludes notes, and character requirements','Alphabetical organization'],correct:2,rat:'The Tabular gives full descriptions, instructional notes (Code first, Use additional code), Excludes 1 and 2 notes, and 7th character options. The Index gives only a starting code range.'},
+  {q:'Which code category covers pressure ulcers?',opts:['S codes (injuries)','L89 category (pressure ulcers)','K codes (GI)','T codes (burns)'],correct:1,rat:'Pressure ulcers (pressure injuries) are in the L89 category under Chapter 12 (Skin and Subcutaneous Tissue). They require site, laterality, and stage.'},
+  {q:'A provider documents "Type 2 diabetes mellitus with chronic kidney disease, stage 3." How many codes would typically be required?',opts:['One — the DM code only','One — the CKD code only','Two — DM type 2 with CKD (combination code) + CKD stage code','Three — DM, CKD, and hypertension'],correct:2,rat:'The E11 combination code captures DM with CKD. A second code (N18.3) captures the specific CKD stage. Two codes together document the full clinical picture per ICD-10-CM guidelines.'},
+  {q:'What is the etiology/manifestation convention in ICD-10-CM?',opts:['The most serious condition is coded first','The manifestation is coded first','The underlying condition (etiology) is sequenced first; the manifestation second','Alphabetical order'],correct:2,rat:'ICD-10-CM etiology/manifestation: code the CAUSE first, the RESULT (manifestation) second. Example: Parkinson disease with dementia — Parkinson first.'},
+  {q:'A patient with asthma presents for a follow-up. Assessment: "Moderate persistent asthma, well-controlled." Which codes?',opts:['Moderate persistent asthma, uncomplicated','Asthma, unspecified, with acute exacerbation','Severe persistent asthma','Acute bronchospasm'],correct:0,rat:'"Moderate persistent" (severity type) + "well-controlled" = no exacerbation = uncomplicated. J45.40 = moderate persistent asthma, uncomplicated. "Well-controlled" = no exacerbation code.'},
+  {q:'Which statement best describes when symptoms are coded separately?',opts:['Always code all symptoms','Code symptoms only when no confirmed diagnosis is documented, or when the symptom is NOT part of the confirmed diagnosis','Code symptoms instead of the diagnosis','Never code symptoms'],correct:1,rat:'Code symptoms separately ONLY when: (1) no confirmed diagnosis is documented, OR (2) the symptom is not routinely associated with the confirmed diagnosis and provides additional clinical information.'},
+  {q:'What does Z00.00 represent in ICD-10-CM?',opts:['Unspecified disease','Encounter for general adult medical exam without abnormal findings','Zero diagnoses for the visit','Emergency encounter'],correct:1,rat:'Z00.00 = Encounter for general adult medical examination without abnormal findings. Z codes are used for encounters that aren\'t due to illness or injury.'},
+  {q:'A coder selects "cellulitis of right upper limb" when the documentation says "cellulitis of right forearm." Is this appropriate?',opts:['Yes — forearm is part of the upper limb, so it is equivalent','No — "right forearm" is more specific and should be used if a more specific code exists','Yes — ICD-10-CM does not distinguish between upper limb and forearm','No — forearm is not in ICD-10-CM'],correct:1,rat:'ICD-10-CM has site-specific cellulitis codes. If a code for "right forearm" exists, it must be used when the forearm is documented — not the more general upper limb code. Always code to highest specificity documented.'},
+  {q:'Which chapter covers mental and behavioral disorders?',opts:['Chapter 4 (E codes)','Chapter 5 (F codes)','Chapter 6 (G codes)','Chapter 7 (H codes)'],correct:1,rat:'Chapter 5 = F01–F99 = Mental, behavioral, and neurodevelopmental disorders. This includes depression, anxiety, PTSD, schizophrenia, etc.'},
+  {q:'What should be coded when a provider documents "fever of unknown origin"?',opts:['Infection, unspecified','Fever of unknown origin (R50.9 or similar)','Do not code this encounter','Hyperthermia, unspecified'],correct:1,rat:'When "fever of unknown origin" is the documented diagnosis, code it as such. R50.9 = fever, unspecified. The provider has made a clinical judgment — it is the diagnosis to code.'},
+  {q:'Which ICD-10-CM convention tells you that two conditions are mutually exclusive and cannot be coded together?',opts:['Includes note','Excludes 1 (Excl.1)','Excludes 2 (Excl.2)','Code also'],correct:1,rat:'Excludes 1 means the excluded condition CANNOT be coded with the listed code — they are mutually exclusive. Excludes 2 means the excluded condition is not part of the listed condition but may be coded together when both are present.'},
+  {q:'A patient with type 2 diabetes develops peripheral neuropathy documented as diabetic. Which coding approach is correct?',opts:['Code only the neuropathy','Code only the diabetes','Code the diabetes and neuropathy together using an E11 combination code','Code them as two separate unrelated conditions'],correct:2,rat:'ICD-10-CM has combination codes for DM with its complications. E11.40 or similar captures Type 2 DM with diabetic neuropathy. The diabetes and neuropathy are coded together because the diabetes caused the neuropathy.'},
+  {q:'How is "laterality" defined in ICD-10-CM?',opts:['The severity of a condition','Whether a condition is acute or chronic','The specification of the right side, left side, or bilateral in a code','The patient\'s dominant hand'],correct:2,rat:'Laterality = which side is affected. ICD-10-CM includes right, left, bilateral, and unspecified laterality for many conditions, especially musculoskeletal, eye, ear, and injury codes.'},
+  {q:'A provider documents "acute pharyngitis." The rapid strep test is negative. No organism is identified. Which code type is correct?',opts:['Streptococcal pharyngitis','Viral pharyngitis','Pharyngitis, unspecified','Viral upper respiratory infection'],correct:2,rat:'No organism was identified. Acute pharyngitis without a documented organism = pharyngitis, acute, unspecified organism. Never code an organism that was NOT documented as confirmed.'},
+  {q:'Which code set is used for DIAGNOSIS coding in the US?',opts:['CPT','HCPCS Level II','ICD-10-CM','ICD-10-PCS'],correct:2,rat:'ICD-10-CM (Clinical Modification) is used for DIAGNOSIS coding on claims and medical records in the US. ICD-10-PCS is for inpatient PROCEDURES. CPT and HCPCS are for outpatient procedures and services.'},
+  {q:'A patient is seen for a well-child visit. No illness or injury is documented. Which code type applies?',opts:['Abdominal pain','Encounter for health supervision of healthy child (Z code)','Common cold','Unspecified pediatric condition'],correct:1,rat:'A well-child visit with no illness = Z code for well-child exam/encounter. Z00.121 or similar. Z codes are used when the purpose is health maintenance, screening, or well visits — not illness.'},
+  {q:'What is the significance of a decimal point in an ICD-10-CM code?',opts:['It separates the chapter from the category','It indicates an injury code','It always appears after the 3rd character to separate the category from the subcategory/subclassification','It means the code is unspecified'],correct:2,rat:'The decimal point in ICD-10-CM always appears after the 3rd character (e.g., J18.9, M54.5, I10). Characters to the right of the decimal provide additional specificity.'},
+  {q:'Documentation: "Left knee medial collateral ligament sprain, initial visit." Which is the correct encounter character?',opts:['D — subsequent','S — sequela','A — initial','No character needed'],correct:2,rat:'First visit for the injury = 7th character A (initial encounter). Always required for S and T injury codes.'},
+  {q:'When should a coder NOT code an "unspecified" code?',opts:['When the documentation doesn\'t provide the detail for a specific code','When the provider leaves the diagnosis blank','When the documentation DOES provide the type, cause, site, or laterality needed for a specific code','When the condition is very rare'],correct:2,rat:'If the documentation DOES contain the specific detail, use it. "Unspecified" is only appropriate when the documentation LACKS the needed detail. Using unspecified when specificity IS documented = under-coding.'},
+  {q:'Which body system do N codes (N00–N99) represent?',opts:['Nervous system','Neoplasms','Genitourinary system','Nutritional disorders'],correct:2,rat:'N00–N99 = Chapter 14 = Diseases of the Genitourinary System. This includes kidney disease (CKD), UTIs, and reproductive system conditions.'},
+  {q:'A coder notes that a code in the Tabular has the instruction "Code first underlying disease." What does this mean?',opts:['The code is a principal diagnosis code','This is a manifestation code — code the underlying disease first, then this code','This code can be used alone','This code applies only to primary diagnoses'],correct:1,rat:'"Code first underlying disease" indicates a manifestation code. ICD-10-CM etiology/manifestation convention: sequence the underlying condition (etiology) FIRST, then the manifestation code SECOND.'},
+  {q:'Which ICD-10-CM code range covers injuries?',opts:['A00–B99','C00–D49','S00–T88','Z00–Z99'],correct:2,rat:'S00–T88 = Chapter 19 = Injury, Poisoning, and Certain Other Consequences of External Causes. S codes are by body region; T codes are for burns, poisoning, and other external causes.'},
+  {q:'A patient presents with a chief complaint of headache, and no diagnosis is confirmed after evaluation. Which code is used?',opts:['Migraine, unspecified','Headache, unspecified','Head injury, unspecified','Not coded — no diagnosis'],correct:1,rat:'When no confirmed diagnosis is documented in outpatient setting, code the documented sign/symptom. Headache (R51) is the documented finding and should be coded as such.'},
+  {q:'What is the purpose of a "Z code" in ICD-10-CM?',opts:['To indicate a zero-dollar claim','To code injuries with no confirmed diagnosis','To describe encounters for reasons OTHER than illness or injury — screenings, immunizations, preventive care, history, status','To code very rare diseases'],correct:2,rat:'Z codes = Chapter 21 = Factors Influencing Health Status and Contact with Health Services. Used for: screening exams, immunizations, preventive visits, past medical/family history, status (post-surgery, transplant recipient), etc.'},
+  {q:'Which of the following represents the BEST coding practice?',opts:['Code the symptoms and the diagnosis together for all conditions','Use the diagnosis code that reimburses at the highest level','Only code what the provider has documented, using the most specific code the documentation supports','Always use an "unspecified" code to be safe'],correct:2,rat:'Best practice: code only what is documented, code to the highest specificity the documentation supports. Accuracy, not reimbursement or safety defaulting, drives correct coding.'},
+];
+
+var quizScore=0,quizAtt=0;
+var quizAnswered={};
+document.getElementById('quiz-tot').textContent=QUIZ_Q.length;
+
+function buildQuiz(){
+  var el=document.getElementById('quiz-container');el.innerHTML='';
+  QUIZ_Q.forEach(function(q,i){
+    var div=document.createElement('div');div.className='card';div.style.marginBottom='12px';
+    div.innerHTML='<p style="font-weight:600;font-size:.9rem;margin-bottom:12px;color:var(--ink)"><span style="color:var(--blue);margin-right:5px;font-family:\'Lora\',serif">Q'+(i+1)+'.</span>'+q.q+'</p>'+
+      q.opts.map(function(o,j){return '<button class="opt" onclick="answerQuiz('+i+','+j+','+q.correct+',this)">'+String.fromCharCode(65+j)+'. '+o+'</button>';}).join('')+
+      '<div class="rationale" id="qr-'+i+'"></div>';
+    el.appendChild(div);
+  });
+  document.getElementById('quiz-score').textContent=0;
+  document.getElementById('quiz-att').textContent=0;
+  document.getElementById('quiz-prog').style.width='0%';
+}
+function answerQuiz(i,chosen,correct,btn){
+  if(quizAnswered[i])return;quizAnswered[i]=true;quizAtt++;
+  var card=btn.closest('.card');
+  card.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});
+  if(chosen===correct){btn.classList.add('correct');quizScore++;}
+  else{btn.classList.add('wrong');card.querySelectorAll('.opt')[correct].classList.add('show-c');}
+  var rat=document.getElementById('qr-'+i);
+  rat.innerHTML='<strong>'+(chosen===correct?'✅ Correct!':'❌')+'</strong> '+QUIZ_Q[i].rat;
+  rat.classList.add('show');
+  document.getElementById('quiz-score').textContent=quizScore;
+  document.getElementById('quiz-att').textContent=quizAtt;
+  document.getElementById('quiz-prog').style.width=(quizAtt/QUIZ_Q.length*100)+'%';
+}
+function resetQuiz(){quizScore=0;quizAtt=0;quizAnswered={};buildQuiz();}
+buildQuiz();
+
+// ══ S12: RAPID REVIEW ══
+var RR_DATA = [
+  {title:'🗺️ The Coding Process — Always',color:'var(--blue)',content:'<ol style="padding-left:18px;line-height:2.1;font-size:.88rem"><li>Provider documents the diagnosis</li><li>Identify the condition to code</li><li>Find the MAIN TERM in the Alphabetic Index</li><li>Follow subterms for type, site, cause, acuity, laterality</li><li>Note the code range suggested</li><li>Verify in the Tabular List — read all notes</li><li>Add characters for specificity (4th–7th as required)</li><li>Select the best-supported, most specific code</li></ol>'},
+  {title:'📌 Main Term Quick Guide',color:'var(--green)',content:'<table style="width:100%;border-collapse:collapse;font-size:.84rem"><tr><th style="background:var(--green);color:#fff;padding:7px 10px;text-align:left">Diagnosis Phrase</th><th style="background:var(--green);color:#fff;padding:7px 10px;text-align:left">Main Term Is</th></tr><tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Acute sinusitis</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Sinusitis</td></tr><tr style="background:#f8fafc"><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Iron deficiency anemia</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Anemia</td></tr><tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Right tibial fracture</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Fracture</td></tr><tr style="background:#f8fafc"><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Type 2 diabetes mellitus</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Diabetes</td></tr><tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Cellulitis of left leg</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Cellulitis</td></tr><tr style="background:#f8fafc"><td style="padding:6px 10px;">Essential hypertension</td><td style="padding:6px 10px;">Hypertension</td></tr></table>'},
+  {title:'❓ Unspecified vs Specified Cheat Sheet',color:'var(--orange)',content:'<p style="font-size:.87rem;line-height:1.75"><strong>Use UNSPECIFIED when:</strong> the type, cause, site, or laterality is NOT documented.<br><strong>Use SPECIFIED when:</strong> the detail IS documented — use every layer of specificity available.<br><strong>NEVER:</strong> Add specificity the documentation doesn\'t support.<br><strong>NEVER:</strong> Default to unspecified when the documentation contains the specific detail.<br><br><strong style="color:var(--orange)">Unspecified ≠ wrong. Unspecified = accurate when the documentation lacks the detail.</strong></p>'},
+  {title:'🚨 Top Student Mistakes',color:'var(--red)',content:'<ul class="lst"><li>Coding symptoms when a confirmed diagnosis is documented</li><li>Using unspecified when specificity IS documented</li><li>Using a specific code when only general terms are documented</li><li>Forgetting laterality (right/left) when it\'s in the notes</li><li>Coding from the Index without verifying in the Tabular</li><li>Coding "rule out" diagnoses as confirmed in outpatient settings</li><li>Confusing asthma and COPD (different chapters)</li><li>Forgetting 7th character for injury codes</li><li>Missing "with" complications when they\'re documented (e.g., DM with CKD)</li><li>Choosing a less specific code when a more specific one exists</li></ul>'},
+  {title:'🎯 If You See This, Think This',color:'var(--purple)',content:'<table style="width:100%;border-collapse:collapse;font-size:.84rem"><tr><th style="background:var(--purple);color:#fff;padding:7px 10px;text-align:left">Documentation Clue</th><th style="background:var(--purple);color:#fff;padding:7px 10px;text-align:left">Think This</th></tr><tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">"Rule out," "possible," "suspected"</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Code symptoms only (outpatient)</td></tr><tr style="background:#f8fafc"><td style="padding:6px 10px;border-bottom:1px solid var(--border)">"Right," "left," "bilateral"</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Laterality code — must be captured</td></tr><tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">"Acute" or "new onset"</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Look for acute-specific code</td></tr><tr style="background:#f8fafc"><td style="padding:6px 10px;border-bottom:1px solid var(--border)">"Chronic" or "longstanding"</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Look for chronic-specific code</td></tr><tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">"DM with..." (e.g., DM with neuropathy)</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Look for DM combination code (E10/E11)</td></tr><tr style="background:#f8fafc"><td style="padding:6px 10px;border-bottom:1px solid var(--border)">First visit for injury</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">7th character A (initial encounter)</td></tr><tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Asymptomatic screening visit</td><td style="padding:6px 10px;border-bottom:1px solid var(--border)">Z code for screening/encounter</td></tr><tr style="background:#f8fafc"><td style="padding:6px 10px;">Underlying disease + its complication</td><td style="padding:6px 10px;">Etiology first, manifestation second</td></tr></table>'},
+  {title:'📋 Chapter Letter Anchors',color:'var(--teal)',content:'<div style="display:flex;flex-wrap:wrap;gap:8px;font-size:.84rem"><div style="background:var(--blue-l);border:1px solid var(--blue);border-radius:6px;padding:8px 12px"><strong>A–B</strong> = Infectious</div><div style="background:#fce4ec;border:1px solid #e91e63;border-radius:6px;padding:8px 12px"><strong>C–D49</strong> = Neoplasms</div><div style="background:var(--green-l);border:1px solid var(--green);border-radius:6px;padding:8px 12px"><strong>D50–D89</strong> = Blood</div><div style="background:var(--yellow-l);border:1px solid var(--yellow);border-radius:6px;padding:8px 12px"><strong>E</strong> = Endocrine/DM</div><div style="background:var(--purple-l);border:1px solid var(--purple);border-radius:6px;padding:8px 12px"><strong>F</strong> = Mental Health</div><div style="background:var(--orange-l);border:1px solid var(--orange);border-radius:6px;padding:8px 12px"><strong>G</strong> = Nervous System</div><div style="background:var(--red-l);border:1px solid var(--red);border-radius:6px;padding:8px 12px"><strong>I</strong> = Circulatory (HTN, MI)</div><div style="background:var(--teal-l);border:1px solid var(--teal);border-radius:6px;padding:8px 12px"><strong>J</strong> = Respiratory</div><div style="background:var(--blue-l);border:1px solid var(--blue-m);border-radius:6px;padding:8px 12px"><strong>K</strong> = Digestive/GI</div><div style="background:#fce4ec;border:1px solid #ad1457;border-radius:6px;padding:8px 12px"><strong>L</strong> = Skin</div><div style="background:var(--green-l);border:1px solid #2e7d32;border-radius:6px;padding:8px 12px"><strong>M</strong> = Musculoskeletal</div><div style="background:var(--teal-l);border:1px solid #0277bd;border-radius:6px;padding:8px 12px"><strong>N</strong> = Genitourinary</div><div style="background:var(--orange-l);border:1px solid var(--orange);border-radius:6px;padding:8px 12px"><strong>S–T</strong> = Injuries</div><div style="background:#f3e5f5;border:1px solid #6a1b9a;border-radius:6px;padding:8px 12px"><strong>Z</strong> = Z codes / Status</div></div>'},
+];
+var rrEl=document.getElementById('rr-container');
+RR_DATA.forEach(function(r){
+  var div=document.createElement('div');div.className='card';div.style.borderTop='5px solid '+r.color;
+  div.innerHTML='<h3 style="font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:700;font-size:.95rem;color:'+r.color+';margin-bottom:12px">'+r.title+'</h3>'+r.content;
+  rrEl.appendChild(div);
+});
+</script>
+</body>
+</html>
