@@ -373,6 +373,9 @@ var SYSTEMS = [
 var sysTabsEl = document.getElementById('sys-tabs');
 var sysContentEl = document.getElementById('sys-content');
 var sysAnswered = {};
+var sysReasons = {};   // keyed by eid
+var sysCorrects = {};  // keyed by eid
+
 SYSTEMS.forEach(function(sys, si) {
   var btn = document.createElement('button');
   btn.className = 'sys-tab' + (si===0?' active':'');
@@ -395,23 +398,35 @@ SYSTEMS.forEach(function(sys, si) {
     '</div></div>' +
     sys.drills.map(function(d, di) {
       var eid = sys.id + '-' + di;
+      sysReasons[eid] = d.reason;
+      sysCorrects[eid] = d.correct;
       return '<div class="card" id="sd-card-' + eid + '">' +
         '<div class="lbl">Documented Diagnosis</div>' +
         '<div class="soap-note" style="margin-bottom:12px"><strong>"' + d.dx + '"</strong></div>' +
         '<p style="font-size:.85rem;font-weight:600;color:var(--ink2);margin-bottom:8px">Which code description BEST matches?</p>' +
-        d.opts.map(function(o,j){return '<button class="opt" onclick="answerSys(\''+eid+'\','+j+','+d.correct+',this,\''+d.reason.replace(/'/g,"\\'")+'\')">' + String.fromCharCode(65+j) + '. ' + o + '</button>';}).join('') +
+        d.opts.map(function(o,j){
+          return '<button class="opt" onclick="answerSys(\'' + eid + '\',' + j + ',this)">' + String.fromCharCode(65+j) + '. ' + o + '</button>';
+        }).join('') +
         '<div class="rationale" id="sd-rat-' + eid + '"></div></div>';
     }).join('');
   sysContentEl.appendChild(sec);
 });
-function answerSys(eid, chosen, correct, btn, reason) {
-  if (sysAnswered[eid]) return; sysAnswered[eid] = true;
+
+function answerSys(eid, chosen, btn) {
+  if (sysAnswered[eid]) return;
+  sysAnswered[eid] = true;
+  var correct = sysCorrects[eid];
+  var reason = sysReasons[eid];
   var card = document.getElementById('sd-card-' + eid);
-  card.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});
-  if (chosen === correct) btn.classList.add('correct');
-  else { btn.classList.add('wrong'); card.querySelectorAll('.opt')[correct].classList.add('show-c'); }
+  card.querySelectorAll('.opt').forEach(function(b){ b.disabled = true; });
+  if (chosen === correct) {
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    card.querySelectorAll('.opt')[correct].classList.add('show-c');
+  }
   var rat = document.getElementById('sd-rat-' + eid);
-  rat.innerHTML = '<strong>' + (chosen===correct?'✅ Correct!':'❌ Not the best match.') + '</strong> ' + reason;
+  rat.innerHTML = '<strong>' + (chosen === correct ? '✅ Correct!' : '❌ Not the best match.') + '</strong> ' + reason;
   rat.classList.add('show');
 }
 
